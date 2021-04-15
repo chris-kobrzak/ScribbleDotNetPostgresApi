@@ -1,0 +1,13 @@
+{
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#dc143c",
+        "activityBar.foreground": "#fff",
+        "activityBar.inactiveForeground": "#fcfcfccf",
+        "activityBarBadge.background": "#353535",
+        "activityBarBadge.foreground": "#fff"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
+    "editor.formatOnSave": true
+}
