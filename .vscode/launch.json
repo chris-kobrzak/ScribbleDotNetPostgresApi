@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/Oss.Api/bin/Debug/net5.0/Oss.Api.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/src/Oss.Api",
             "console": "internalConsole",
             "stopAtEntry": false
         },
