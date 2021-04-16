@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Oss.Client.Database;
+using Oss.Client.Database.Repositories;
 
 namespace Oss.Api
 {
@@ -34,6 +36,8 @@ namespace Oss.Api
             });
 
             services.AddConfig(Configuration);
+
+            ConfigureRepositories(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +60,11 @@ namespace Oss.Api
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private void ConfigureRepositories(IServiceCollection services)
+        {
+            services.AddTransient<IUserRepository, UserRepository>();
         }
     }
 }
