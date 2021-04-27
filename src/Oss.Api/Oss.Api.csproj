@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Oss.Client.Database\Oss.Client.Database.csproj" />
+    <ProjectReference Include="..\Oss.Core\Oss.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -64,6 +64,7 @@ namespace Oss.Api
 
         private void ConfigureRepositories(IServiceCollection services)
         {
+            services.AddTransient<IDatabaseConnection, PostgresConnection>();
             services.AddTransient<IUserRepository, UserRepository>();
         }
     }

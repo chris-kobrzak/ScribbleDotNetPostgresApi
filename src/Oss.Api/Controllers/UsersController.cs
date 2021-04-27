@@ -10,18 +10,18 @@ namespace Oss.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<UsersController> _logger;
         private readonly IUserRepository userRepository;
 
-        public WeatherForecastController(
-            ILogger<WeatherForecastController> logger,
+        public UsersController(
+            ILogger<UsersController> logger,
             IUserRepository userRepository
             )
         {
@@ -30,19 +30,19 @@ namespace Oss.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IEnumerable<Dictionary<string, object>>> Get()
         {
             var rng = new Random();
 
-            userRepository.Exists();
+            return await userRepository.GetAllActive();
 
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            // return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            // {
+            //     Date = DateTime.Now.AddDays(index),
+            //     TemperatureC = rng.Next(-20, 55),
+            //     Summary = Summaries[rng.Next(Summaries.Length)]
+            // })
+            // .ToArray();
         }
     }
 }
