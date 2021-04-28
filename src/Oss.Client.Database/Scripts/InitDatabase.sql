@@ -9,37 +9,63 @@ CREATE DATABASE oss WITH
 
 \c oss
 
-CREATE TABLE users (id SERIAL, name VARCHAR, active BOOLEAN);
+CREATE EXTENSION pgcrypto;
 
-INSERT INTO users VALUES (1, 'Chris', TRUE);
-INSERT INTO users VALUES (2, 'Donna', FALSE);
-INSERT INTO users VALUES (3, 'Carmen', TRUE);
+CREATE TABLE users (
+  id UUID NOT NULL DEFAULT gen_random_uuid(),
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  role_id INT,
+  email VARCHAR(100),
+  password CHAR(60),
+  first_name VARCHAR(100),
+  last_name VARCHAR(100)
+);
 
+ALTER TABLE users OWNER TO scribble;
 
-CREATE FUNCTION public.get_users()
-RETURNS TABLE(
-  id INTEGER,
-  name VARCHAR,
-  active BOOLEAN
-)
-LANGUAGE SQL
-SECURITY DEFINER
-AS $BODY$
-  SELECT * FROM public.users
-$BODY$;
-
-ALTER FUNCTION public.get_users() OWNER TO scribble;
+INSERT INTO users (active, role_id, email, password, first_name)
+  VALUES (TRUE, 2, 'chris@gmail.com', 'foo', 'Chris');
+INSERT INTO users (active, role_id, email, password, first_name)
+  VALUES (FALSE, 2, 'donna@gmail.com', 'foo', 'Donna');
+INSERT INTO users (active, role_id, email, password, first_name)
+  VALUES (TRUE, 2, 'carmen@gmail.com', 'foo', 'Carmen');
 
 
 CREATE FUNCTION public.get_users(_active BOOLEAN)
 RETURNS TABLE(
-  id INTEGER,
-  name VARCHAR
+  id UUID,
+  active BOOLEAN,
+  role_id INT,
+  email VARCHAR,
+  first_name VARCHAR,
+  last_name VARCHAR
 )
 LANGUAGE SQL
 SECURITY DEFINER
 AS $BODY$
-  SELECT id, name FROM public.users WHERE active = _active
+  SELECT id, active, role_id, email, first_name, last_name
+  FROM public.users
+  WHERE active = _active
 $BODY$;
 
-ALTER FUNCTION public.get_users() OWNER TO scribble;
+ALTER FUNCTION public.get_users(BOOLEAN) OWNER TO scribble;
+
+
+CREATE FUNCTION public.get_user_by_credentials(_email VARCHAR, _password VARCHAR)
+RETURNS TABLE(
+  id UUID,
+  role_id INT,
+  email VARCHAR,
+  first_name VARCHAR,
+  last_name VARCHAR
+)
+LANGUAGE SQL
+SECURITY DEFINER
+AS $BODY$
+  SELECT id, role_id, email, first_name, last_name
+  FROM public.users
+  WHERE email = _email AND password = _password
+  LIMIT 1
+$BODY$;
+
+ALTER FUNCTION public.get_user_by_credentials(VARCHAR, VARCHAR) OWNER TO scribble;

@@ -9,7 +9,8 @@ namespace Oss.Client.Database.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private const string activeUsersQuery = @"select id, name from get_users(:pActive)";
+        private const string activeUsersQuery = @"select id, first_name from get_users(:pActive)";
+        private const string userByCredentialsQuery = @"select id, first_name from get_user_by_credentials(:pUser, :pPassword)";
 
         private readonly IDatabaseConnection _dbConn;
 
@@ -18,12 +19,32 @@ namespace Oss.Client.Database.Repositories
             _dbConn = dbConn;
         }
 
+        public async Task<User> GetByCredentials(string email, string password)
+        {
+            using var connection = await _dbConn.Get();
+            NpgsqlCommand executor = new NpgsqlCommand(userByCredentialsQuery, connection);
+            executor.Parameters.AddWithValue("pUser", email);
+            executor.Parameters.AddWithValue("pPassword", password);
+
+            using var reader = await executor.ExecuteReaderAsync();
+
+            if (!await reader.ReadAsync())
+            {
+                return null;
+            }
+
+            return new User
+            {
+                Id = reader["id"].ToString(),
+                Name = reader["first_name"].ToString()
+            };
+        }
+
         public async Task<IEnumerable<Dictionary<string, object>>> GetAllActive()
         {
             using var connection = await _dbConn.Get();
 
             NpgsqlCommand executor = new NpgsqlCommand(activeUsersQuery, connection);
-            executor.CommandType = CommandType.Text;
             executor.Parameters.AddWithValue("pActive", true);
 
             using var reader = await executor.ExecuteReaderAsync();

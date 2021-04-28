@@ -1,16 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Oss.Client.Database;
 using Oss.Client.Database.Repositories;
@@ -37,6 +41,7 @@ namespace Oss.Api
 
             services.AddConfig(Configuration);
 
+            ConfigureAuthentication(services);
             ConfigureRepositories(services);
         }
 
@@ -51,15 +56,49 @@ namespace Oss.Api
             }
 
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private void ConfigureAuthentication(IServiceCollection services)
+        {
+            var configureJwt = GetConfigureJwt();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(configureJwt);
+
+            services.AddTransient<ITokenBuilder, TokenBuilder>();
+        }
+
+        private Action<JwtBearerOptions> GetConfigureJwt()
+        {
+            return jwt =>
+            {
+                var key = Encoding.ASCII.GetBytes(Configuration["Auth:Secret"]);
+
+                jwt.SaveToken = true;
+                jwt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    // this will validate the 3rd part of the jwt token using the secret that we added in the appsettings and verify we have generated the jwt token
+                    ValidateIssuerSigningKey = true,
+                    // Add the secret key to our Jwt encryption
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    RequireExpirationTime = true,
+                    ValidateLifetime = true
+                };
+            };
         }
 
         private void ConfigureRepositories(IServiceCollection services)
