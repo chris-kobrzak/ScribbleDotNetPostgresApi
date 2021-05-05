@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -67,17 +68,21 @@ namespace Oss.Api
 
         private void ConfigureAuthentication(IServiceCollection services)
         {
-            var configureJwt = GetConfigureJwt();
+            services
+                .AddAuthentication(GetConfigureAuthentication())
+                .AddJwtBearer(GetConfigureJwt());
 
-            services.AddAuthentication(options =>
+            services.AddTransient<ITokenBuilder, TokenBuilder>();
+        }
+
+        private static Action<AuthenticationOptions> GetConfigureAuthentication()
+        {
+            return options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(configureJwt);
-
-            services.AddTransient<ITokenBuilder, TokenBuilder>();
+            };
         }
 
         private Action<JwtBearerOptions> GetConfigureJwt()
