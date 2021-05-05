@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Oss.Client.Database.Repositories;
@@ -9,6 +8,7 @@ using Oss.Client.Database.Repositories;
 namespace Oss.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {

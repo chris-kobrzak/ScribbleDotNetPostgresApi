@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,6 +34,7 @@ namespace Oss.Api.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<String> Login([FromBody] LoginModel model)
         {
             var user = await _userRepository.GetByCredentials(model.Login, model.Password);
