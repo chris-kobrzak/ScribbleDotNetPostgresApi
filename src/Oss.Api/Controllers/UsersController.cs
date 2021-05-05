@@ -12,13 +12,8 @@ namespace Oss.Api.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<UsersController> _logger;
-        private readonly IUserRepository userRepository;
+        private readonly IUserRepository _userRepository;
 
         public UsersController(
             ILogger<UsersController> logger,
@@ -26,23 +21,13 @@ namespace Oss.Api.Controllers
             )
         {
             _logger = logger;
-            this.userRepository = userRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
         public async Task<IEnumerable<Dictionary<string, object>>> Get()
         {
-            var rng = new Random();
-
-            return await userRepository.GetAllActive();
-
-            // return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            // {
-            //     Date = DateTime.Now.AddDays(index),
-            //     TemperatureC = rng.Next(-20, 55),
-            //     Summary = Summaries[rng.Next(Summaries.Length)]
-            // })
-            // .ToArray();
+            return await _userRepository.GetAllActive();
         }
     }
 }
