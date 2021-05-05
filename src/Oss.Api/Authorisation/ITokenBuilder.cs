@@ -1,10 +1,11 @@
 using System;
+using Microsoft.IdentityModel.Tokens;
 using Oss.Core.Models;
 
 namespace Oss.Api
 {
     public interface ITokenBuilder
     {
-        public string Build(User user, String secret);
+        public SecurityToken Build(User user, String secret);
     }
 }

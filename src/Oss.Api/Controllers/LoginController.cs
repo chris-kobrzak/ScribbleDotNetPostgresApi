@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -45,9 +46,11 @@ namespace Oss.Api.Controllers
             }
 
             var token = _tokenBuilder.Build(user, _authConfig.Secret);
+
             return Ok(new
             {
-                token = token
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiryTime = token.ValidTo
             });
         }
     }

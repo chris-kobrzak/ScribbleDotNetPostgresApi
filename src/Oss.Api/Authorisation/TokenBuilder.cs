@@ -14,7 +14,7 @@ namespace Oss.Api
         // public List<string> Errors { get; set; }
 
         // TODO Consider passing only user.Id instead of kitchen sinking the user object
-        public string Build(User user, String secret)
+        public SecurityToken Build(User user, String secret)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secret);
@@ -43,10 +43,7 @@ namespace Oss.Api
                 )
             };
 
-            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-            var jwtToken = jwtTokenHandler.WriteToken(token);
-
-            return jwtToken;
+            return jwtTokenHandler.CreateToken(tokenDescriptor);
         }
     }
 }
