@@ -35,16 +35,20 @@ namespace Oss.Api.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<String> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await _userRepository.GetByCredentials(model.Login, model.Password);
 
             if (user == null)
             {
-                return null;
+                return Unauthorized();
             }
 
-            return _tokenBuilder.Build(user, _authConfig.Secret);
+            var token = _tokenBuilder.Build(user, _authConfig.Secret);
+            return Ok(new
+            {
+                token = token
+            });
         }
     }
 }
