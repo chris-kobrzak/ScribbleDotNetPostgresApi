@@ -36,7 +36,7 @@ namespace Oss.Api.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromForm] LoginModel model)
         {
             var user = await _userRepository.GetByCredentials(model.Login, model.Password);
 
