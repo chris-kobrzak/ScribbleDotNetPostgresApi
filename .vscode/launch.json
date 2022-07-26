@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Oss.Api/bin/Debug/net5.0/Oss.Api.dll",
+            "program": "${workspaceFolder}/src/Oss.Api/bin/Debug/net6.0/Oss.Api.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Oss.Api",
             "console": "internalConsole",
